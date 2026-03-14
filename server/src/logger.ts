@@ -1,31 +1,25 @@
-import fs from 'fs';
-import path from 'path';
+import { appendFile, readFile } from "node:fs/promises";
+import path from "node:path";
 
-// Define log file location
-const logFilePath = path.join(import.meta.dirname, '..', 'data.log');
+const logFilePath = path.join(import.meta.dirname, "..", "data.log");
 
-export const appendToLog = (message: string) => {
+export async function appendToLog(message: string): Promise<void> {
   const timestamp = new Date().toISOString();
-  const logEntry = `[${timestamp}] ${message}\n`;
-  
-  // Asynchronously append to the file
-  fs.appendFile(logFilePath, logEntry, (err) => {
-    if (err) {
-      console.error('Failed to write to log file:', err);
-    }
-  });
-};
+  const entry = `[${timestamp}] ${message}\n`;
+  try {
+    await appendFile(logFilePath, entry);
+  } catch (err: unknown) {
+    console.error("Failed to write to log file:", err);
+  }
+}
 
-export const getLogContent = (): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    fs.readFile(logFilePath, 'utf8', (err, data) => {
-      if (err) {
-        if (err.code === 'ENOENT') {
-          return resolve(''); // file doesn't exist yet, return empty
-        }
-        return reject(err);
-      }
-      resolve(data);
-    });
-  });
-};
+export async function getLogContent(): Promise<string> {
+  try {
+    return await readFile(logFilePath, "utf8");
+  } catch (err: unknown) {
+    if (err instanceof Error && "code" in err && (err as NodeJS.ErrnoException).code === "ENOENT") {
+      return "";
+    }
+    throw err;
+  }
+}
