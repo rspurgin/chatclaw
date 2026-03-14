@@ -9,8 +9,7 @@ router.get("/log", async (_req: Request, res: Response): Promise<void> => {
     const data = await getLogContent();
     res.json({ success: true, data });
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Unknown error";
-    console.error("Error fetching log:", message);
+    console.error("Error fetching log:", err);
     res.status(500).json({ success: false, error: "Failed to read log file" });
   }
 });

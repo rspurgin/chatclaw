@@ -9,8 +9,7 @@ export async function appendToLog(message: string): Promise<void> {
   try {
     await appendFile(logFilePath, entry);
   } catch (err: unknown) {
-    const detail = err instanceof Error ? err.message : String(err);
-    console.error(`Failed to write to log file: ${detail}`);
+    console.error("Failed to write to log file:", err);
   }
 }
 

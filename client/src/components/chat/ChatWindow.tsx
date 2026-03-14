@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import type { FormEvent } from "react";
 import { socket } from "../../lib/socket";
 
 interface ChatMessage {
@@ -28,7 +29,7 @@ export const ChatWindow: React.FC = () => {
     };
   }, []);
 
-  const handleSend = (e: React.FormEvent) => {
+  const handleSend = (e: FormEvent) => {
     e.preventDefault();
     if (inputVal.trim()) {
       socket.emit("chat_message", inputVal);
