@@ -39,7 +39,10 @@ describe("logger", () => {
       const spy = vi.spyOn(console, "error").mockImplementation(() => {});
       mockedAppendFile.mockRejectedValue(new Error("disk full"));
       await appendToLog("test");
-      expect(spy).toHaveBeenCalledWith(expect.stringContaining("disk full"));
+      expect(spy).toHaveBeenCalledWith(
+        expect.stringContaining("Failed to write to log file"),
+        expect.objectContaining({ message: "disk full" }),
+      );
       spy.mockRestore();
     });
   });

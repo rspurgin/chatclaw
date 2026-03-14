@@ -3,13 +3,13 @@ import type { FormEvent } from "react";
 import { socket } from "../../lib/socket";
 
 interface ChatMessage {
-  id: string;
-  text: string;
+  readonly id: string;
+  readonly text: string;
 }
 
-export const ChatWindow: React.FC = () => {
+export function ChatWindow() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [inputVal, setInputVal] = useState('');
+  const [inputVal, setInputVal] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -17,15 +17,12 @@ export const ChatWindow: React.FC = () => {
   }, [messages]);
 
   useEffect(() => {
-    // Listen for incoming messages
-    const handleChatMessage = (msg: string) => {
+    const handler = (msg: string) => {
       setMessages((prev) => [...prev, { id: crypto.randomUUID(), text: msg }]);
     };
-
-    socket.on('chat_message', handleChatMessage);
-
+    socket.on("chat_message", handler);
     return () => {
-      socket.off('chat_message', handleChatMessage);
+      socket.off("chat_message", handler);
     };
   }, []);
 
@@ -55,8 +52,8 @@ export const ChatWindow: React.FC = () => {
           </div>
         ) : (
           messages.map((msg) => (
-            <div 
-              key={msg.id} 
+            <div
+              key={msg.id}
               className="bg-dark-800 p-3 rounded-lg rounded-tl-none border border-gray-800 max-w-[85%] animate-fade-in-up"
             >
               <p className="text-sm text-gray-200 break-words">{msg.text}</p>

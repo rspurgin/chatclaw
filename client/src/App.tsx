@@ -2,15 +2,10 @@ import { ChatWindow } from "./components/chat/ChatWindow";
 import { LogViewer } from "./components/log/LogViewer";
 import { socket } from "./lib/socket";
 
-import { ChatWindow } from './components/chat/ChatWindow';
-import { LogViewer } from './components/log/LogViewer';
-
-function App() {
-  const handleShareSystemInfo = async () => {
-    // Example piece of arbitrary data to broadcast and log
+export function App() {
+  const handleShareSystemInfo = () => {
     const systemInfo = `Agent connected at ${new Date().toLocaleTimeString()}! Ready to share data.`;
-    const { socket } = await import('./lib/socket');
-    socket.emit('share_data', systemInfo);
+    socket.emit("share_data", systemInfo);
   };
 
   return (

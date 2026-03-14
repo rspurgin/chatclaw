@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { SERVER_URL } from '../../lib/config';
+import { useState, useEffect, useCallback } from "react";
+import { SERVER_URL } from "../../lib/config";
 
-export const LogViewer: React.FC = () => {
-  const [logData, setLogData] = useState<string>('');
+export function LogViewer() {
+  const [logData, setLogData] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
