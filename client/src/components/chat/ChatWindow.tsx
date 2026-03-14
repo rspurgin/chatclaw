@@ -1,9 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { socket } from "../../lib/socket";
 
-export function ChatWindow() {
-  const [messages, setMessages] = useState<string[]>([]);
-  const [inputVal, setInputVal] = useState("");
+interface ChatMessage {
+  id: string;
+  text: string;
+}
+
+export const ChatWindow: React.FC = () => {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [inputVal, setInputVal] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -11,12 +16,15 @@ export function ChatWindow() {
   }, [messages]);
 
   useEffect(() => {
-    const handler = (msg: string) => {
-      setMessages((prev) => [...prev, msg]);
+    // Listen for incoming messages
+    const handleChatMessage = (msg: string) => {
+      setMessages((prev) => [...prev, { id: crypto.randomUUID(), text: msg }]);
     };
-    socket.on("chat_message", handler);
+
+    socket.on('chat_message', handleChatMessage);
+
     return () => {
-      socket.off("chat_message", handler);
+      socket.off('chat_message', handleChatMessage);
     };
   }, []);
 
@@ -45,12 +53,12 @@ export function ChatWindow() {
             <p className="mt-1">Send a message to start chatting!</p>
           </div>
         ) : (
-          messages.map((msg, i) => (
-            <div
-              key={i}
+          messages.map((msg) => (
+            <div 
+              key={msg.id} 
               className="bg-dark-800 p-3 rounded-lg rounded-tl-none border border-gray-800 max-w-[85%] animate-fade-in-up"
             >
-              <p className="text-sm text-gray-200 break-words">{msg}</p>
+              <p className="text-sm text-gray-200 break-words">{msg.text}</p>
             </div>
           ))
         )}
