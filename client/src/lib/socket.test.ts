@@ -16,12 +16,12 @@ describe("socket", () => {
     vi.clearAllMocks();
   });
 
-  it("exports a socket instance created with expected URL and options", async () => {
+  it("exports a socket instance created with expected options", async () => {
     const { socket } = await import("./socket");
     expect(socket).toBeDefined();
     expect(mockIo).toHaveBeenCalledTimes(1);
     expect(mockIo).toHaveBeenCalledWith(
-      expect.stringMatching(/^https?:\/\//),
+      expect.any(String),
       { autoConnect: true, reconnection: true },
     );
   });

@@ -1,11 +1,15 @@
 import express from "express";
 import cors from "cors";
 import http from "node:http";
+import path from "node:path";
+import { existsSync } from "node:fs";
 import { Server } from "socket.io";
 import routes from "./routes.js";
 import { appendToLog } from "./logger.js";
 import { config } from "./config.js";
 import type { ServerToClientEvents, ClientToServerEvents } from "./events.js";
+
+const clientDistPath = path.join(import.meta.dirname, "..", "public");
 
 export function createApp(): {
   app: express.Express;
@@ -16,7 +20,19 @@ export function createApp(): {
   const server = http.createServer(app);
 
   app.use(cors({ origin: config.corsOrigin, methods: ["GET", "POST"] }));
+
+  app.get("/health", (_req, res) => {
+    res.json({ status: "ok" });
+  });
+
   app.use("/api", routes);
+
+  if (existsSync(clientDistPath)) {
+    app.use(express.static(clientDistPath));
+    app.get("{*path}", (_req, res) => {
+      res.sendFile(path.join(clientDistPath, "index.html"));
+    });
+  }
 
   const io = new Server<ClientToServerEvents, ServerToClientEvents>(server, {
     cors: { origin: config.corsOrigin, methods: ["GET", "POST"] },

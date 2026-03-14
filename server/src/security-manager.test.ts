@@ -29,7 +29,7 @@ describe("SecurityManager", () => {
       await client.importSecret(TEST_KEY_HEX);
       await server.importSecret(TEST_KEY_HEX);
 
-      const plain = "Hello, Mac Mini!";
+      const plain = "Hello, Open Claw!";
       const packet = await client.encryptStream(plain);
       expect(packet.length).toBeGreaterThan(4);
       const decrypted = await server.decryptStream(packet);
